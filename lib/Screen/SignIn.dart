@@ -1,5 +1,6 @@
-import 'package:chat_app/Pages/SignUp.dart';
-import 'package:chat_app/Reuseable/AuthField.dart';
+import 'package:chat_app/Screen/Home.dart';
+import 'package:chat_app/Screen/SignUp.dart';
+import 'package:chat_app/widgets/AuthField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:chat_app/services/GoogleAuth.dart';
@@ -99,16 +100,18 @@ class _SignInState extends State<SignIn> {
                                   .doc(user!.uid)
                                   .get();
 
-                                print('Login Successfully');
+                                String name = userDoc.data()?['Name']??'';
+                                String email = userDoc.data()?['Email']??'';
+                                String photoUrl = userDoc.data()?['Photo'] ?? '';
 
-                                // String name = userDoc.data()?['Name']??'';
-                                // String email = userDoc.data()?['Email']??'';
-                                //
-                                // Get.offAll(() => Homepage{
-                                //   uid:user.uid,
-                                //   name: name,
-                                //   email: email,
-                                // });
+                                Get.offAll(() => Home(
+                                  uid:user.uid,
+                                  name: name,
+                                  email: email,
+                                  photoUrl: photoUrl.isEmpty
+                                      ? 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}' // default avatar
+                                      : photoUrl,
+                                ));
                               }catch(e){
                                 final snackBar = SnackBar(content: Text(e.toString()));
                                 ScaffoldMessenger.of(context).showSnackBar(snackBar);

@@ -1,11 +1,13 @@
-import 'package:chat_app/Reuseable/AuthField.dart';
+import 'package:chat_app/widgets/AuthField.dart';
 import 'package:chat_app/services/GoogleAuth.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/Pages/SignIn.dart';
+import 'package:chat_app/Screen/SignIn.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+
+import '../utils/PasswordLogic.dart';
 
 class SignUp extends StatefulWidget {
   static route () => MaterialPageRoute(
@@ -24,6 +26,7 @@ class _SignUpState extends State<SignUp> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmpassController = TextEditingController();
   bool _secureText = true;
   PasswordStrength? _passwordStrength;
   bool _showPasswordInstructions = false;
@@ -106,6 +109,26 @@ class _SignUpState extends State<SignUp> {
                           )
                             : null,
                         ),
+                        SizedBox(height: 10,),
+                        AuthField(
+                          labelText: 'Confirm Password',
+                          controller: confirmpassController,
+                          isPasswordText: _secureText,
+                          icon: Icons.key,
+                          suffixIcon: passwordController.text.isNotEmpty
+                              ? IconButton(
+                            icon: Icon(_secureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _secureText = !_secureText;
+                              });
+                            },
+                          )
+                              : null,
+                        ),
                         if (_showPasswordInstructions) ...[
                           const SizedBox(height: 10),
                           Column(
@@ -137,32 +160,42 @@ class _SignUpState extends State<SignUp> {
                             setState(() {
                               circular = true;
                             });
-                            if(formKey.currentState!.validate()){
-                              try{
-                                UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(
-                                    email: emailController.text, password: passwordController.text);
+                            if(passwordController.text == confirmpassController.text){
+                              if(formKey.currentState!.validate()){
+                                try{
+                                  UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(
+                                      email: emailController.text, password: passwordController.text);
 
-                                await userCredential.user?.updateDisplayName(nameController.text);
+                                  await userCredential.user?.updateDisplayName(nameController.text);
 
-                                await firebaseStore
-                                  .collection('users')
-                                  .doc(userCredential.user!.uid)
-                                  .set({
-                                  'Name': nameController.text,
-                                  'Email': emailController.text,
-                                  'Photo': userCredential.user?.photoURL ?? '',
-                                  'created_at': DateTime.now(),
-                                });
+                                  await firebaseStore
+                                      .collection('users')
+                                      .doc(userCredential.user!.uid)
+                                      .set({
+                                    'Name': nameController.text,
+                                    'Email': emailController.text,
+                                    'Photo': userCredential.user?.photoURL ?? '',
+                                    'created_at': DateTime.now(),
+                                  });
 
-                                Get.off(() => SignIn());
-                                circular = false;
-                              }catch (e){
-                                final snackBar = SnackBar(content: Text(e.toString()));
-                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                setState(() {
+                                  Get.off(() => SignIn());
                                   circular = false;
-                                });
+                                }catch (e){
+                                  final snackBar = SnackBar(content: Text(e.toString()));
+                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                  setState(() {
+                                    circular = false;
+                                  });
+                                }
                               }
+                            } else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Passwords do not match')),
+                              );
+                              setState(() {
+                                circular = false;
+                              });
+                              return;
                             }
                           },
                           style: ElevatedButton.styleFrom(
