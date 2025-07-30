@@ -3,7 +3,6 @@ import 'package:chat_app/services/Chat_service.dart';
 import 'package:chat_app/widgets/MyDrawer.dart';
 import 'package:chat_app/widgets/UserTile.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 // The Home screen shows a list of all users except the currently logged-in user.
 class Home extends StatelessWidget {
