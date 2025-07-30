@@ -72,13 +72,15 @@ class _SignInState extends State<SignIn> {
                           icon: Icons.key,
                           suffixIcon: passwordController.text.isNotEmpty
                             ? IconButton(
-                              onPressed: () {
-
-                              },
-                              icon: Icon(_secureText
-                              ? Icons.visibility
-                                  : Icons.visibility_off,
-                              )
+                            icon: Icon(_secureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _secureText = !_secureText;
+                              });
+                            },
                           )
                               : null,
                         ),

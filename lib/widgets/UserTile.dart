@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class UserTile extends StatelessWidget {
   // The text to display (usually a username or user info)
   final String text;
+  final String Image;
 
   // A function to call when the tile is tapped
   final void Function()? onTap;
@@ -13,6 +14,7 @@ class UserTile extends StatelessWidget {
     super.key,
     required this.text,
     required this.onTap,
+    required this.Image,
   });
 
   @override
@@ -36,7 +38,10 @@ class UserTile extends StatelessWidget {
         child: Row(
           children: [
             // Person icon at the start
-            Icon(Icons.person),
+            CircleAvatar(
+              radius: 14,
+              backgroundImage: NetworkImage(Image),
+            ),
 
             // Small horizontal space between the icon and the text
             SizedBox(width: 10),

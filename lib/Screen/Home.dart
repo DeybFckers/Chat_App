@@ -78,14 +78,18 @@ class Home extends StatelessWidget {
   // Builds a single user's tile (except the current user)
   Widget _buildUserListItem(Map<String, dynamic> userData, BuildContext context) {
       return UserTile(
-        text: userData["Name"], // display name
+        text: userData["Name"],
+        Image: userData["Photo"],// display name
         onTap: () {
           // Navigate to ChatPage when user is tapped
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
-                receiverName: userData["Name"], // pass receiver info
+                receiverName: userData["Name"],
+                receiverImage: userData["Photo"],
+                receiverID: userData["uid"],
+                receiverEmail: userData["Email"],// pass receiver info
               ),
             ),
           );
