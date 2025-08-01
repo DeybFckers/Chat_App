@@ -1,13 +1,14 @@
+import 'package:chat_app/Screen/AppScreen/Home.dart';
 import 'package:chat_app/widgets/AuthField.dart';
 import 'package:chat_app/services/GoogleAuth.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/Screen/SignIn.dart';
+import 'package:chat_app/Screen/Form/SignIn.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
-import '../utils/PasswordLogic.dart';
+import '../../utils/PasswordLogic.dart';
 
 class SignUp extends StatefulWidget {
   static route () => MaterialPageRoute(
@@ -28,6 +29,7 @@ class _SignUpState extends State<SignUp> {
   final passwordController = TextEditingController();
   final confirmpassController = TextEditingController();
   bool _secureText = true;
+  bool _confirmsecureText = true;
   PasswordStrength? _passwordStrength;
   bool _showPasswordInstructions = false;
   bool circular = false;
@@ -113,21 +115,21 @@ class _SignUpState extends State<SignUp> {
                         AuthField(
                           labelText: 'Confirm Password',
                           controller: confirmpassController,
-                          isPasswordText: _secureText,
+                          isPasswordText: _confirmsecureText,
                           icon: Icons.key,
-                          suffixIcon: passwordController.text.isNotEmpty
-                              ? IconButton(
-                            icon: Icon(_secureText
+                          suffixIcon: confirmpassController.text.isNotEmpty
+                          ? IconButton(
+                            icon: Icon(_confirmsecureText
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                             ),
                             onPressed: () {
                               setState(() {
-                                _secureText = !_secureText;
+                                _confirmsecureText = !_confirmsecureText;
                               });
                             },
                           )
-                              : null,
+                            : null,
                         ),
                         if (_showPasswordInstructions) ...[
                           const SizedBox(height: 10),
@@ -178,7 +180,15 @@ class _SignUpState extends State<SignUp> {
                                     'created_at': DateTime.now(),
                                   });
 
-                                  Get.off(() => SignIn());
+                                  String defaultPhotoUrl = userCredential.user?.photoURL ??
+                                      'https://ui-avatars.com/api/?name=${Uri.encodeComponent(nameController.text)}';
+
+                                  Get.offAll(() => Home(
+                                    uid: userCredential.user!.uid,
+                                    name: nameController.text,
+                                    email: emailController.text,
+                                    photoUrl: defaultPhotoUrl,
+                                  ));
                                   circular = false;
                                 }catch (e){
                                   final snackBar = SnackBar(content: Text(e.toString()));

@@ -1,4 +1,6 @@
+import 'package:chat_app/Screen/AppScreen/Settings.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class myDrawer extends StatelessWidget {
   final String Image;
@@ -53,6 +55,11 @@ class myDrawer extends StatelessWidget {
                     title: Text('S E T T I N G S'),
                     onTap: (){
                       Navigator.pop(context);
+                      Get.offAll(() => SettingsPage(
+                        name: name,
+                        email: email,
+                        photoUrl: Image,
+                      ));
                     },
                   ),
                 ],

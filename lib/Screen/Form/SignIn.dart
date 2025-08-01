@@ -1,5 +1,5 @@
-import 'package:chat_app/Screen/Home.dart';
-import 'package:chat_app/Screen/SignUp.dart';
+import 'package:chat_app/Screen/AppScreen/Home.dart';
+import 'package:chat_app/Screen/Form/SignUp.dart';
 import 'package:chat_app/widgets/AuthField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -66,12 +66,12 @@ class _SignInState extends State<SignIn> {
                         ),
                         SizedBox(height: 10,),
                         AuthField(
-                            labelText: 'Password',
-                            controller: passwordController,
+                          labelText: 'Password',
+                          controller: passwordController,
                           isPasswordText: _secureText,
                           icon: Icons.key,
                           suffixIcon: passwordController.text.isNotEmpty
-                            ? IconButton(
+                          ? IconButton(
                             icon: Icon(_secureText
                                 ? Icons.visibility
                                 : Icons.visibility_off,
