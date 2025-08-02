@@ -73,8 +73,8 @@ class _SignInState extends State<SignIn> {
                           suffixIcon: passwordController.text.isNotEmpty
                           ? IconButton(
                             icon: Icon(_secureText
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                             ),
                             onPressed: () {
                               setState(() {
@@ -82,7 +82,7 @@ class _SignInState extends State<SignIn> {
                               });
                             },
                           )
-                              : null,
+                            : null,
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(

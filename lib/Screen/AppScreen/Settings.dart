@@ -1,13 +1,15 @@
 import 'package:chat_app/Screen/SettingsScreen/Email.dart';
+import 'package:chat_app/Screen/SettingsScreen/Name.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/widgets/MyDrawer.dart';
 
 
 class SettingsPage extends StatelessWidget {
+  final String uid;
   final String photoUrl;
   final String name;
   final String email;
-  SettingsPage({super.key, required this.photoUrl, required this.name, required this.email});
+  SettingsPage({super.key, required this.photoUrl, required this.name, required this.email, required this.uid});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class SettingsPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.blue,
       ),
-      drawer: myDrawer(Image: photoUrl, name: name, email: email),
+      drawer: myDrawer(uid: uid, Image: photoUrl, name: name, email: email),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 120, 20, 20),
@@ -76,7 +78,11 @@ class SettingsPage extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: (){
-                        print('Name');
+                        Navigator.push(
+                            context, MaterialPageRoute(
+                            builder: (context) => NameScreen()
+                        )
+                        );
                       },
                       child:Container(
                         width: double.infinity,

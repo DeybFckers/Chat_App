@@ -1,12 +1,14 @@
+import 'package:chat_app/Screen/AppScreen/Home.dart';
 import 'package:chat_app/Screen/AppScreen/Settings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class myDrawer extends StatelessWidget {
+  final String uid;
   final String Image;
   final String name;
   final String email;
-  const myDrawer({super.key, required this.Image, required this.name, required this.email});
+  const myDrawer({super.key, required this.Image, required this.name, required this.email, required this.uid});
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,12 @@ class myDrawer extends StatelessWidget {
                     title: Text('H O M E'),
                     onTap: (){
                       Navigator.pop(context);
+                      Get.offAll(() => Home(
+                        uid: uid,
+                        name: name,
+                        email: email,
+                        photoUrl: Image,
+                      ));
                     },
                   ),
                   ListTile(
@@ -56,6 +64,7 @@ class myDrawer extends StatelessWidget {
                     onTap: (){
                       Navigator.pop(context);
                       Get.offAll(() => SettingsPage(
+                        uid: uid,
                         name: name,
                         email: email,
                         photoUrl: Image,

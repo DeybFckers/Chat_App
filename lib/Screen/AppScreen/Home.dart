@@ -41,7 +41,7 @@ class Home extends StatelessWidget {
       ),
 
       // Custom Drawer widget to show user info (name, email, photo)
-      drawer: myDrawer(Image: photoUrl, name: name, email: email),
+      drawer: myDrawer(uid:uid, Image: photoUrl, name: name, email: email),
 
       // The body shows the list of users in real time
       body: _buildUserList(),
