@@ -1,6 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat_app/services/ChatSettings.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class NameScreen extends StatefulWidget {
   const NameScreen({super.key});
@@ -10,45 +9,13 @@ class NameScreen extends StatefulWidget {
 }
 
 class _NameScreenState extends State<NameScreen> {
-  final firebaseAuth = FirebaseAuth.instance;
-  final firestore = FirebaseFirestore.instance;
   final formKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final chatSettings = ChatSettings();
   bool isPasswordText = true;
-
-  Future<void>changeName({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-  })async{
-    try{
-      User? user = firebaseAuth.currentUser;
-
-      if(user == null) throw Exception("No user signed in.");
-
-      //re-authenticate
-      final cred = EmailAuthProvider.credential(
-          email: email, password: password
-      );
-      await user.reauthenticateWithCredential(cred);
-
-      String fullName = '${firstName} ${lastName}';
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-        'Name': fullName,
-      });
-
-      final snackBar = SnackBar(content: Text(toString()));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    }catch(e){
-      final snackBar = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
 
 
   @override
@@ -161,7 +128,7 @@ class _NameScreenState extends State<NameScreen> {
                       ElevatedButton(
                         onPressed: (){
                           if(formKey.currentState!.validate()) {
-                            changeName(
+                            chatSettings.changeName(
                                 firstName: firstNameController.text,
                                 lastName: lastNameController.text,
                                 email: emailController.text,

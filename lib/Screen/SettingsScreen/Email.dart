@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chat_app/services/ChatSettings.dart';
 import 'package:flutter/material.dart';
 
 
@@ -11,52 +10,12 @@ class EmailScreen extends StatefulWidget {
 }
 
 class _EmailScreenState extends State<EmailScreen> {
-  final firebaseAuth = FirebaseAuth.instance;
-  final firestore = FirebaseFirestore.instance;
   final formKey = GlobalKey<FormState>();
   final newEmailController = TextEditingController();
   final confirmEmailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isPasswordText = true;
-
-  Future<void> changeEmail({
-    required String newEmail,
-    required String confirmEmail,
-    required String password,
-  }) async{
-    try{
-      User? user = firebaseAuth.currentUser;
-
-      if(user == null) throw Exception("No user signed in.");
-      if(newEmail != confirmEmail) throw Exception("Emails do not match.");
-
-      //re-authenticate
-      final cred = EmailAuthProvider.credential(
-          email:user.email! , password: password,
-      );
-      await user.reauthenticateWithCredential(cred);
-
-      //if real apps use this
-      // await user.verifyBeforeUpdateEmail(newEmail);
-
-      // practice app / disable Email enumeration protection (recommended) in auth settings
-      // ignore: deprecated_member_use
-      await user.updateEmail(newEmail);
-      await firestore
-      .collection('users')
-      .doc(user.uid)
-      .update({
-        "Email": newEmail
-      });
-
-      final snackBar = SnackBar(content: Text(toString()));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    }catch(e){
-      final snackBar = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
+  final chatSettings = ChatSettings();
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +114,7 @@ class _EmailScreenState extends State<EmailScreen> {
                       ElevatedButton(
                         onPressed: (){
                           if(formKey.currentState!.validate()) {
-                            changeEmail(
+                            chatSettings.changeEmail(
                               newEmail: newEmailController.text,
                               confirmEmail: confirmEmailController.text,
                               password: passwordController.text,
