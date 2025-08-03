@@ -1,6 +1,8 @@
+import 'package:chat_app/Theme/Theme_provider.dart';
 import 'package:chat_app/services/Chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // This page displays the chat screen between the current user and a receiver.
 class ChatPage extends StatelessWidget {
@@ -94,7 +96,7 @@ class ChatPage extends StatelessWidget {
         // Once data is available, show the list of messages
         return ListView(
           children: snapshot.data!.docs
-              .map((doc) => _buildMessageItem(doc))
+              .map((doc) => _buildMessageItem(context, doc))
               .toList(),
         );
       },
@@ -102,7 +104,7 @@ class ChatPage extends StatelessWidget {
   }
 
   // Builds a single chat message item
-  Widget _buildMessageItem(DocumentSnapshot doc) {
+  Widget _buildMessageItem(BuildContext context,DocumentSnapshot doc) {
     // Convert Firestore document to Map
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -113,6 +115,15 @@ class ChatPage extends StatelessWidget {
     var messageAlignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
     CrossAxisAlignment columnAlignment = isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     MainAxisAlignment rowAlignment = isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start;
+
+    bool isDarkMode = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
+    //color definitions
+    Color senderBgColor = isDarkMode ? Colors.blue : Colors.blue;
+    Color senderTextColor = Colors.white;
+
+    Color receiverBgColor = isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200;
+    Color receiverTextColor = isDarkMode ? Colors.white : Colors.black;
 
 
     //last touch
@@ -133,19 +144,22 @@ class ChatPage extends StatelessWidget {
                     padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.blue,
+                      color: senderBgColor,
                     ),
-                    child: Text(data['message'] ?? '',
-                        style: TextStyle(color: Colors.white)
+                    child: Text(
+                      data['message'] ?? '',
+                      style: TextStyle(color: senderTextColor),
                     ),
                   ),
                 ),
                 SizedBox(width: 8),
                 CircleAvatar(
-                  radius:12,
-                  backgroundImage: NetworkImage(data['Photo'] ?? 'https://via.placeholder.com/150'),
+                  radius: 12,
+                  backgroundImage: NetworkImage(
+                    data['Photo'] ?? 'https://via.placeholder.com/150',
+                  ),
                 ),
-                ]
+              ]
                 : [
                   //avatar first in left side
                 CircleAvatar(
@@ -158,9 +172,11 @@ class ChatPage extends StatelessWidget {
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[200],
+                        color: receiverBgColor,
                       ),
-                      child: Text(data['message']?? ''),
+                      child: Text(data['message']?? '',
+                        style: TextStyle(color: receiverTextColor),
+                      ),
                     ),
                 )
               ]

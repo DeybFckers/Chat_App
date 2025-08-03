@@ -27,7 +27,6 @@ class UserTile extends StatelessWidget {
       child: Container(
         // Styling the container
         decoration: BoxDecoration(
-          color: Colors.white, // Background color
           borderRadius: BorderRadius.circular(12), // Rounded corners
         ),
 

@@ -24,7 +24,8 @@ class _SignUpState extends State<SignUp> {
   final firebaseAuth = FirebaseAuth.instance;
   final firebaseStore = FirebaseFirestore.instance;
   final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmpassController = TextEditingController();
@@ -36,7 +37,7 @@ class _SignUpState extends State<SignUp> {
   AuthClass authClass = AuthClass();
 
   void dispose(){
-    nameController.dispose();
+    firstNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -80,10 +81,24 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         SizedBox(height: 20,),
-                        AuthField(
-                          labelText: 'Full Name',
-                          controller: nameController,
-                          icon: Icons.person,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AuthField(
+                                  labelText: "First Name",
+                                  controller: firstNameController,
+                                  icon: Icons.person
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: AuthField(
+                                labelText: "Last Name",
+                                controller: lastNameController,
+                                icon: Icons.person
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 10,),
                         AuthField(
@@ -168,24 +183,27 @@ class _SignUpState extends State<SignUp> {
                                   UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(
                                       email: emailController.text, password: passwordController.text);
 
-                                  await userCredential.user?.updateDisplayName(nameController.text);
+                                  String fullName = '${firstNameController.text} ${lastNameController.text}';
+
+                                  await userCredential.user?.updateDisplayName(fullName);
+
 
                                   await firebaseStore
                                       .collection('users')
                                       .doc(userCredential.user!.uid)
                                       .set({
-                                    'Name': nameController.text,
+                                    'Name': fullName,
                                     'Email': emailController.text,
                                     'Photo': userCredential.user?.photoURL ?? '',
                                     'created_at': DateTime.now(),
                                   });
 
                                   String defaultPhotoUrl = userCredential.user?.photoURL ??
-                                      'https://ui-avatars.com/api/?name=${Uri.encodeComponent(nameController.text)}';
+                                      'https://ui-avatars.com/api/?name=${Uri.encodeComponent(fullName)}';
 
                                   Get.offAll(() => Home(
                                     uid: userCredential.user!.uid,
-                                    name: nameController.text,
+                                    name: fullName,
                                     email: emailController.text,
                                     photoUrl: defaultPhotoUrl,
                                   ));
