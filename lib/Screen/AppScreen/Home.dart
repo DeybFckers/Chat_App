@@ -5,7 +5,7 @@ import 'package:chat_app/widgets/UserTile.dart';
 import 'package:flutter/material.dart';
 
 // Home screen: displays a list of all users except the currently logged-in user.
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   // These values are passed from the SignIn page
   final String uid;       // Current user's UID
   final String name;      // Current user's name
@@ -21,8 +21,19 @@ class Home extends StatelessWidget {
     required this.photoUrl,
   });
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   // Instance of ChatService: gives access to Firebase methods
   final ChatService _chatService = ChatService();
+
+  @override
+  void initState(){
+    super.initState();
+    _chatService.updateUserFCMToken();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +52,7 @@ class Home extends StatelessWidget {
       ),
 
       // Custom Drawer widget to show user info (name, email, photo)
-      drawer: myDrawer(uid:uid, Image: photoUrl, name: name, email: email),
+      drawer: myDrawer(uid:widget.uid, Image: widget.photoUrl, name: widget.name, email: widget.email),
 
       // The body shows the list of users in real time
       body: _buildUserList(),
@@ -67,7 +78,7 @@ class Home extends StatelessWidget {
         return ListView(
           children: snapshot.data!
           // Filter out the current user
-              .where((userData) => userData['uid'] != uid)
+              .where((userData) => userData['uid'] != widget.uid)
 
           // For each remaining user, build a tile
               .map<Widget>((userData) => _buildUserListItem(userData, context))
@@ -78,7 +89,6 @@ class Home extends StatelessWidget {
   }
 
   // This builds a single user tile
-  // userData is a Map<String, dynamic> (e.g., {'Name': ..., 'Photo': ..., 'Email': ...})
   Widget _buildUserListItem(Map<String, dynamic> userData, BuildContext context) {
     return UserTile(
       text: userData["Name"],         // Display user's name

@@ -1,12 +1,15 @@
 import 'package:chat_app/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chat_app/services/NotificationApi.dart';
 
 // This class handles user authentication and chat logic
 class ChatService {
   // Firebase instances for auth and database
   final firebaseAuth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+
+  final _firebaseApi = FirebaseApi();
 
   // Get the currently logged-in Firebase user
   User? getCurrentUser() {
@@ -28,6 +31,23 @@ class ChatService {
         return user;             // each user is a Map<String, dynamic>
       }).toList();               // convert to a List
     });
+  }
+
+  Future<void>updateUserFCMToken() async{
+    try {
+      final user = firebaseAuth.currentUser;
+      final token = await _firebaseApi.getFCMToken(); // fetch from FirebaseApi
+
+      if (user != null && token != null) {
+        await _firestore.collection('users').doc(user.uid).update({
+          'fcmToken': token,
+          'lastSeen': Timestamp.now(),
+        });
+        print('✅ Token updated in Firestore');
+      }
+    } catch (e) {
+      print('❌ Error updating FCM token: $e');
+    }
   }
 
   // Send a message to Firestore under the correct chat_room
